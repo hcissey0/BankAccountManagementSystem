@@ -40,10 +40,24 @@ public class AccountManager {
                 "STATUS"
         };
         int width = 0;
+        HashMap<String, Integer> headerWidths = new HashMap<String, Integer>();
         for (String h: headers) {
-            width += h.length();
+            headerWidths.put(h, h.length() + 2);
         }
-        System.out.println("_".repeat(width));
+        Set<Map.Entry<String, Integer>> set = headerWidths.entrySet();
+        for (Map.Entry<String, Integer> hw: set) {
+            System.out.print(hw.getKey());
+            System.out.println(hw.getValue());
+            System.out.print(" | ");
+        }
+
+        for (String h: headers) {
+            if (h == headers[0]) {
+                System.out.print("| ");
+            }
+            System.out.print(h);
+            System.out.print(" | ");
+        }
 
 
     }
