@@ -14,6 +14,7 @@ public abstract class Account {
         this.accountNumber = generateAccountNumber();
         this.balance = 0;
         this.customer = customer;
+        this.status = "Active";
     }
 
     private String generateAccountNumber() {
