@@ -14,7 +14,7 @@ public class Transaction implements Transactable {
     private double balanceAfter;
     private String timestamp;
 
-    Transaction(String accountNumber, String type, double amount, double balanceAfterTransaction) {
+    public Transaction(String accountNumber, String type, double amount, double balanceAfterTransaction) {
         this.transactionId = generateTransactionId();
         this.accountNumber = accountNumber;
         this.type = type;

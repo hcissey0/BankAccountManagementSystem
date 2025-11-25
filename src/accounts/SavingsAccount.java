@@ -7,8 +7,9 @@ public class SavingsAccount extends Account {
     private final double interestRate;
     private final double minimumBalance;
 
-    public SavingsAccount(Customer customer) {
+    public SavingsAccount(Customer customer, double initialDeposit) {
         super(customer);
+        this.deposit(initialDeposit);
         this.interestRate = 3.5;
         this.minimumBalance = 500.0;
     }

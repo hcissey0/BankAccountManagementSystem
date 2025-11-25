@@ -6,8 +6,9 @@ public class CheckingAccount extends Account {
     private final double overdraftLimit;
     private final double monthlyFee;
 
-    public CheckingAccount(Customer customer) {
+    public CheckingAccount(Customer customer, double initialDeposit) {
         super(customer);
+        this.deposit(initialDeposit);
         this.overdraftLimit = 1000;
         this.monthlyFee = 10;
     }
