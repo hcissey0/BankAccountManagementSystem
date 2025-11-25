@@ -48,18 +48,20 @@ public class TransactionManager {
                 "AMOUNT",
                 "DATE"
         };
-        Map<String, Integer> headerWidth = new HashMap<>();
+        Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
 
-        String[][] table = new String[transactions.size() + 1][headers.length];
+
+        String[][] table = new String[transactions.size() + 1][headers.length]; // a 2D array to hold table data
+
 
         for (String string : headers) {
             headerWidth.put(string, string.length());
         }
 
-        table[0] = headers;
+        table[0] = headers; // set headers in the first row
 
-        int rowIndex = 1;
-        for (Transaction tx : transactions) {
+        int rowIndex = 1; // skip the header row
+        for (Transaction tx : transactions) { // set the with of the columes according to the longest data
             if (tx.getAccountNumber().equals(accountNumber)) {
                 table[rowIndex][0] = tx.getTransactionId();
                 if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {
@@ -88,7 +90,7 @@ public class TransactionManager {
 
         // Print the table
         for (int i = 0; i < rowIndex; i++) {
-            if (i == 0) {
+            if (i == 0) { // print border line before header
                 for (String header : headers) {
                     int headerWidthValue = headerWidth.get(header);
                     System.out.print("+");
@@ -98,10 +100,10 @@ public class TransactionManager {
             }
             for (int j = 0; j < headers.length; j++) {
                 System.out.print("| ");
-                System.out.print(String.format("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j]));
+                System.out.print(String.format("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j])); // pad the string with spaces to the right
             }
             System.out.println("|");
-            if (i == 0 || i == rowIndex - 1) {
+            if (i == 0 || i == rowIndex - 1) { // print border line after header and after last row
                 for (String header : headers) {
                     int headerWidthValue = headerWidth.get(header);
                     System.out.print("+");

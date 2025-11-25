@@ -38,9 +38,9 @@ public class AccountManager {
                 "BALANCE",
                 "STATUS"
         };
-        Map<String, Integer> headerWidth = new HashMap<>();
+        Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
 
-        String[][] table = new String[accounts.size() + 1][headers.length];
+        String[][] table = new String[accounts.size() + 1][headers.length]; // a 2D array to hold table data
 
         for (String string : headers) {
             headerWidth.put(string, string.length());
@@ -49,7 +49,7 @@ public class AccountManager {
         
         table[0] = headers;
         
-        for (int i = 0; i < accounts.size(); i++) {
+        for (int i = 0; i < accounts.size(); i++) { // set the with of the columes according to the longest data, and add data to the table
             Account acc = accounts.get(i);
             table[i + 1][0] = acc.getAccountNumber();
             if (headerWidth.get(headers[0]) < acc.getAccountNumber().length()) {
@@ -74,7 +74,7 @@ public class AccountManager {
 
         }
 
-        for (String header: headers) {
+        for (String header: headers) { // print border line before header
             int headerWidthValue = headerWidth.get(header);
             System.out.print("+");
             System.out.print("-".repeat(headerWidthValue + 2));
@@ -82,7 +82,7 @@ public class AccountManager {
 
         
         System.out.println("+");
-        for (String[] row: table) {
+        for (String[] row: table) { // print table rows
             for (String cell: row) {
                 if (row[0] == cell) {
                     System.out.print("| ");
