@@ -3,7 +3,7 @@ package transactions;
 import java.util.*;
 
 public class TransactionManager {
-    private List<Transaction> transactions;
+    private final List<Transaction> transactions;
     private int transactionCount;
 
     public TransactionManager() {
@@ -40,7 +40,7 @@ public class TransactionManager {
         return transactionCount;
     }
 
-    public void viewTransactionsByAccount(String accountNumber) {
+    public void viewAllTransactions(Scanner scanner) {
         String[] headers = {
                 "TRANSACTION ID",
                 "ACCOUNT NUMBER",
@@ -48,6 +48,17 @@ public class TransactionManager {
                 "AMOUNT",
                 "DATE"
         };
+
+        if (this.transactionCount == 0) {
+            System.out.println();
+            System.out.println("+----------------------------+");
+            System.out.println("| No transactions available. |");
+            System.out.println("+----------------------------+");
+            System.out.println("\nPress Enter to continue...");
+            scanner.nextLine();
+            return;
+        }
+
         Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
 
 
@@ -59,6 +70,100 @@ public class TransactionManager {
         }
 
         table[0] = headers; // set headers in the first row
+
+        double totalDeposits = 0;
+        double totalWithdrawals = 0;
+
+        int rowIndex = 1; // skip the header row
+        for (Transaction tx : transactions) { // set the with of the columes according to the longest data
+            table[rowIndex][0] = tx.getTransactionId();
+            if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {
+                headerWidth.replace(headers[0], tx.getTransactionId().length());
+            }
+            table[rowIndex][1] = tx.getAccountNumber();
+            if (headerWidth.get(headers[1]) < tx.getAccountNumber().length()) {
+                headerWidth.replace(headers[1], tx.getAccountNumber().length());
+            }
+            table[rowIndex][2] = tx.getType();
+            if (headerWidth.get(headers[2]) < tx.getType().length()) {
+                headerWidth.replace(headers[2], tx.getType().length());
+            }
+            table[rowIndex][3] = String.valueOf(tx.getAmount());
+            if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length()) {
+                headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length());
+            }
+
+            table[rowIndex][4] = tx.getTimestamp();
+            if (headerWidth.get(headers[4]) < tx.getTimestamp().length()) {
+                headerWidth.replace(headers[4], tx.getTimestamp().length());
+            }
+
+            if (tx.getType().equals("DEPOSIT"))
+                totalDeposits += tx.getAmount();
+            else
+                totalWithdrawals += tx.getAmount();
+            rowIndex++;
+        }
+
+
+        // Print the table
+        for (int i = 0; i < rowIndex; i++) {
+            if (i == 0) { // print border line before header
+                for (String header : headers) {
+                    int headerWidthValue = headerWidth.get(header);
+                    System.out.print("+");
+                    System.out.print("-".repeat(headerWidthValue + 2));
+                }
+                System.out.println("+");
+            }
+            for (int j = 0; j < headers.length; j++) {
+                System.out.print("| ");
+                System.out.printf("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j]); // pad the string with spaces to the right
+            }
+            System.out.println("|");
+            if (i == 0 || i == rowIndex - 1) { // print border line after header and after last row
+                for (String header : headers) {
+                    int headerWidthValue = headerWidth.get(header);
+                    System.out.print("+");
+                    System.out.print("-".repeat(headerWidthValue + 2));
+                }
+                System.out.println("+");
+            }
+        }
+
+        System.out.println("\nNumber of transactions: " + (rowIndex - 1));
+        System.out.println("Total transactions: " + transactionCount);
+        System.out.println("Total Deposits: $" + totalDeposits);
+        System.out.println("Total Withdrawals: $" + totalWithdrawals);
+
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+
+    public void viewTransactionsByAccount(String accountNumber, Scanner scanner) {
+        String[] headers = {
+                "TRANSACTION ID",
+                "ACCOUNT NUMBER",
+                "TYPE",
+                "AMOUNT",
+                "DATE"
+        };
+
+
+        Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
+
+
+        String[][] table = new String[transactions.size() + 1][headers.length]; // a 2D array to hold table data
+
+
+        for (String string : headers) {
+            headerWidth.put(string, string.length());
+        }
+
+        table[0] = headers; // set headers in the first row
+
+        double totalDeposits = 0, totalWithdrawals = 0;
+
 
         int rowIndex = 1; // skip the header row
         for (Transaction tx : transactions) { // set the with of the columes according to the longest data
@@ -79,14 +184,31 @@ public class TransactionManager {
                 if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length()) {
                     headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length());
                 }
-                
+
                 table[rowIndex][4] = tx.getTimestamp();
                 if (headerWidth.get(headers[4]) < tx.getTimestamp().length()) {
                     headerWidth.replace(headers[4], tx.getTimestamp().length());
                 }
+
+                if (tx.getType().equals("DEPOSIT"))
+                    totalDeposits += tx.getAmount();
+                else
+                    totalWithdrawals += tx.getAmount();
                 rowIndex++;
             }
         }
+
+        if (rowIndex - 1 == 0) {
+            System.out.println();
+            System.out.println("+--------------------------------------------+");
+            System.out.println("| No transactions recorded for this account. |");
+            System.out.println("+--------------------------------------------+");
+            System.out.println("\nPress Enter to continue...");
+            scanner.nextLine();
+            return;
+        }
+
+        System.out.println("\nNumber of transactions: " + (rowIndex - 1));
 
         // Print the table
         for (int i = 0; i < rowIndex; i++) {
@@ -100,7 +222,7 @@ public class TransactionManager {
             }
             for (int j = 0; j < headers.length; j++) {
                 System.out.print("| ");
-                System.out.print(String.format("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j])); // pad the string with spaces to the right
+                System.out.printf("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j]); // pad the string with spaces to the right
             }
             System.out.println("|");
             if (i == 0 || i == rowIndex - 1) { // print border line after header and after last row
@@ -112,8 +234,15 @@ public class TransactionManager {
                 System.out.println("+");
             }
         }
-    }
 
+        System.out.println("\nNumber of transactions: " + (rowIndex - 1));
+        System.out.println("Total transactions: " + transactionCount);
+        System.out.println("Total Deposits: $" + totalDeposits);
+        System.out.println("Total Withdrawals: $" + totalWithdrawals);
+
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
 
 
 }

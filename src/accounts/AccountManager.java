@@ -4,7 +4,7 @@ import java.util.*;
 
 public class AccountManager {
 
-    private List<Account> accounts;
+    private final List<Account> accounts;
     private int accountCount;
 
     public AccountManager() {
@@ -22,7 +22,7 @@ public class AccountManager {
     }
 
     public Account findAccount(String accountNumber) {
-        for (Account acc: accounts) {
+        for (Account acc : accounts) {
             if (acc.getAccountNumber().equals(accountNumber)) {
                 return acc;
             }
@@ -30,7 +30,7 @@ public class AccountManager {
         return null;
     }
 
-    public void viewAllAccounts() {
+    public void viewAllAccounts(Scanner scanner) {
         String[] headers = {
                 "ACCOUNT NUMBER",
                 "CUSTOMER NAME",
@@ -38,6 +38,16 @@ public class AccountManager {
                 "BALANCE",
                 "STATUS"
         };
+
+        if (accountCount == 0) {
+            System.out.println("+------------------------+");
+            System.out.println("| No accounts available. |");
+            System.out.println("+------------------------+");
+            System.out.println("\nPress Enter to continue...");
+            scanner.nextLine();
+            return;
+        }
+
         Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
 
         String[][] table = new String[accounts.size() + 1][headers.length]; // a 2D array to hold table data
@@ -46,70 +56,76 @@ public class AccountManager {
             headerWidth.put(string, string.length());
         }
 
-        
+
         table[0] = headers;
-        
-        for (int i = 0; i < accounts.size(); i++) { // set the with of the columes according to the longest data, and add data to the table
-            Account acc = accounts.get(i);
-            table[i + 1][0] = acc.getAccountNumber();
+
+        int rowIndex = 1;
+        for (Account acc : accounts) {// set the with of the columes according to the longest data, and add data to the table
+            table[rowIndex][0] = acc.getAccountNumber();
             if (headerWidth.get(headers[0]) < acc.getAccountNumber().length()) {
                 headerWidth.replace(headers[0], acc.getAccountNumber().length());
             }
-            table[i + 1][1] = acc.getCustomer().getName();
+            table[rowIndex][1] = acc.getCustomer().getName();
             if (headerWidth.get(headers[1]) < acc.getCustomer().getName().length()) {
                 headerWidth.replace(headers[1], acc.getCustomer().getName().length());
             }
-            table[i + 1][2] = acc.getAccountType();
+            table[rowIndex][2] = acc.getAccountType();
             if (headerWidth.get(headers[2]) < acc.getAccountType().length()) {
                 headerWidth.replace(headers[2], acc.getAccountType().length());
             }
-            table[i + 1][3] = String.valueOf(acc.getBalance());
+            table[rowIndex][3] = String.valueOf(acc.getBalance());
             if (headerWidth.get(headers[3]) < String.valueOf(acc.getBalance()).length()) {
                 headerWidth.replace(headers[3], String.valueOf(acc.getBalance()).length());
             }
-            table[i + 1][4] = acc.getStatus();
+            table[rowIndex][4] = acc.getStatus();
             if (headerWidth.get(headers[4]) < acc.getStatus().length()) {
                 headerWidth.replace(headers[4], acc.getStatus().length());
             }
-
+            rowIndex++;
         }
 
-        for (String header: headers) { // print border line before header
-            int headerWidthValue = headerWidth.get(header);
-            System.out.print("+");
-            System.out.print("-".repeat(headerWidthValue + 2));
-        }
-
-        
-        System.out.println("+");
-        for (String[] row: table) { // print table rows
-            for (String cell: row) {
-                if (row[0] == cell) {
-                    System.out.print("| ");
-                }
-                System.out.print(cell);
-                System.out.print(" ".repeat(headerWidth.get(headers[Arrays.asList(row).indexOf(cell)]) - cell.length()));
-                System.out.print(" | ");
-            }
-            if (row == table[0] || row == table[table.length - 1]) {
-                System.out.println();
-                for (String header: headers) {
+        for (int i = 0; i < rowIndex; i++) {
+            if (i == 0) { // print border line before header
+                for (String header : headers) {
                     int headerWidthValue = headerWidth.get(header);
                     System.out.print("+");
                     System.out.print("-".repeat(headerWidthValue + 2));
                 }
                 System.out.println("+");
-            } else {
-                System.out.println();
             }
-
+            for (int j = 0; j < headers.length; j++) {
+                System.out.print("| ");
+                System.out.printf("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j]); // pad the string with spaces to the right
+            }
+            System.out.println("|");
+            if (i == 0 || i == rowIndex - 1) { // print border line after header and after last row
+                for (String header : headers) {
+                    int headerWidthValue = headerWidth.get(header);
+                    System.out.print("+");
+                    System.out.print("-".repeat(headerWidthValue + 2));
+                }
+                System.out.println("+");
+            }
         }
+
+        for (String header : headers) { // print border line before header
+            int headerWidthValue = headerWidth.get(header);
+            System.out.print("+");
+            System.out.print("-".repeat(headerWidthValue + 2));
+        }
+        System.out.println("+");
+
+        System.out.println("\nPress Enter to continue...");
+
+        Scanner sc = new Scanner(System.in);
+        sc.nextLine();
+        sc.close();
 
     }
 
     public double getTotalBalance() {
         double totalBalance = 0;
-        for (Account acc: accounts) {
+        for (Account acc : accounts) {
             totalBalance += acc.getBalance();
         }
 

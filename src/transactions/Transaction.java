@@ -1,18 +1,18 @@
 package transactions;
 
-import java.time.*;
-import java.time.format.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Transaction implements Transactable {
 
     private static int transactionCounter = 0;
 
     private final String transactionId;
-    private String accountNumber;
-    private String type;
-    private double amount;
-    private double balanceAfter;
-    private String timestamp;
+    private final String accountNumber;
+    private final String type;
+    private final double amount;
+    private final double balanceAfter;
+    private final String timestamp;
 
     public Transaction(String accountNumber, String type, double amount, double balanceAfterTransaction) {
         this.transactionId = generateTransactionId();
@@ -27,7 +27,11 @@ public class Transaction implements Transactable {
 
 
     private static String generateTransactionId() {
-        return "TXN" + String.format("%03d", transactionCounter++);
+        return "TXN" + String.format("%03d", ++transactionCounter);
+    }
+
+    public static int getTransactionCounter() {
+        return transactionCounter;
     }
 
     @java.lang.Override
@@ -45,10 +49,6 @@ public class Transaction implements Transactable {
 
     public double getBalanceAfter() {
         return balanceAfter;
-    }
-
-    public static int getTransactionCounter() {
-        return transactionCounter;
     }
 
     public String getTimestamp() {

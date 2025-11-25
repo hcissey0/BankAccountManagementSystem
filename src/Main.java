@@ -8,36 +8,45 @@ import customers.RegularCustomer;
 import transactions.Transaction;
 import transactions.TransactionManager;
 
+import java.io.IOException;
 import java.util.*;
+
+
 class Main {
 
 
-    public static void main() {
-        System.out.println("+-------------------------------------+");
-        System.out.println("| BANK ACCOUNT MANAGEMENT - MAIN MENU |");
-        System.out.println("+-------------------------------------+");
+    public static void main() throws IOException {
+        System.out.println("+-------------------------+");
+        System.out.println("| BANK ACCOUNT MANAGEMENT |");
+        System.out.println("+-------------------------+");
+
+        // create an account manager and a transaction manager.
         AccountManager accountManager = new AccountManager();
         TransactionManager transactionManager = new TransactionManager();
         
         int choice = 0;
         Scanner scanner = new Scanner(System.in);
+
         do {
-            System.out.println("\n\nMain Menu:");
+            System.out.println();
+            System.out.println("+-----------+");
+            System.out.println("| MAIN MENU |");
+            System.out.println("+-----------+");
             System.out.println("1. Create Account");
             System.out.println("2. View Accounts");
-            System.out.println("3. Process Transactions");
-            System.out.println("4. View Transaction History");
-            System.out.println("5. Exit\n\n");
+            System.out.println("3. Process Transaction");
+            System.out.println("4. View Transaction History for an account");
+            System.out.println("5. View all Transaction Histories");
+            System.out.println("6. Exit\n");
 
-            // Read the user input
-            choice = readInt(scanner, "Enter your choice: ", 1, 5);
+            choice = readInt(scanner, "Enter your choice: ", 1, 6);
 
             switch (choice) {
                 case 1:
                     createAccount(accountManager, scanner);
                     break;
                 case 2:
-                    viewAccounts(accountManager);
+                    viewAccounts(accountManager, scanner);
                     break;
                 case 3:
                     processTransaction(accountManager, transactionManager, scanner);
@@ -46,18 +55,21 @@ class Main {
                     viewTransactionHistory(transactionManager, scanner);
                     break;
                 case 5:
+                    viewAllTransactionHistory(transactionManager, scanner);
                     break;
                 default:
                     System.out.println("\nInvalid Input. Try Again!\n");
             }
-        } while (choice != 5);
-
-
+        } while (choice != 6);
 
         scanner.close();
 
         System.out.println("Thank you for using Bank Account Management System!");
         System.out.println("Goodbye!");
+    }
+
+    public static void viewAllTransactionHistory(TransactionManager transactionManager, Scanner scanner) {
+        transactionManager.viewAllTransactions(scanner);
     }
 
     public static void viewTransactionHistory(TransactionManager transactionManager, Scanner scanner) {
@@ -68,7 +80,7 @@ class Main {
 
         String accountNumber = readString(scanner, "\nEnter Account number: ");
 
-        transactionManager.viewTransactionsByAccount(accountNumber);
+        transactionManager.viewTransactionsByAccount(accountNumber, scanner);
     }
 
     private static void processTransaction(AccountManager accountManager, TransactionManager transactionManager, Scanner scanner) {
@@ -115,7 +127,7 @@ class Main {
         }
         Transaction transaction = new Transaction(
                 account.getAccountNumber(),
-                (transactionType == 1) ? "Deposit" : "Withdrawal",
+                (transactionType == 1) ? "DEPOSIT" : "WITHDRAWAL",
                 amount,
                 amountAfter       );
         transactionManager.addTransaction(transaction);
@@ -138,7 +150,7 @@ class Main {
     }
 
     private static Customer createCustomer(Scanner scanner) {
-        String name = readString(scanner, "\n\nEnter customer name: ");
+        String name = readString(scanner, "\nEnter customer name: ");
         int age = readInt(scanner, "Enter customer age: ", 0, 150);
         String contact = readString(scanner, "Enter customer contact: ");
         String address = readString(scanner, "Enter customer address: ");
@@ -147,7 +159,7 @@ class Main {
         System.out.println("1. Regular Customer (Standard banking services)");
         System.out.println("2. Premium Customer (Enhanced benefits, min balance $10,000)");
 
-        int customerType = readInt(scanner, "Select type (1-2): ", 1, 2);
+        int customerType = readInt(scanner, "\nSelect type (1-2): ", 1, 2);
 
         if (customerType == 1) {
             return new RegularCustomer(name, age, contact, address);
@@ -161,7 +173,7 @@ class Main {
         System.out.println("1. Savings Account (Interest: 3.5%, Min Balance: $500)");
         System.out.println("2. Checking Account (Overdraft: $1,00, Monthly Fee: $10)");
 
-        int accountType = readInt(scanner, "Select type (1-2): ", 1, 2);
+        int accountType = readInt(scanner, "\nSelect type (1-2): ", 1, 2);
 
         double initialDeposit = readDouble(scanner, "\nEnter initial deposit amount: ", 0);
 
@@ -172,8 +184,8 @@ class Main {
         }
     }
 
-    public static void viewAccounts(AccountManager accountManager) {
-        accountManager.viewAllAccounts();
+    public static void viewAccounts(AccountManager accountManager, Scanner scanner) {
+        accountManager.viewAllAccounts(scanner);
     }
 
     // input validation metods
