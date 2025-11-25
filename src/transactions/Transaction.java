@@ -26,7 +26,7 @@ public class Transaction implements Transactable {
     }
 
 
-    private String generateTransactionId() {
+    private static String generateTransactionId() {
         return "TXN" + String.format("%03d", transactionCounter++);
     }
 

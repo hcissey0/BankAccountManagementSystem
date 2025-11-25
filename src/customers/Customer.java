@@ -13,7 +13,7 @@ public abstract class Customer {
         this.customerId = generateCustomerId();
     }
 
-    private String generateCustomerId() {
+    private static String generateCustomerId() {
         // "CUS" +
         return "CUS" + String.format("%03d", customerCounter++);
     }

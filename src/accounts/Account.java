@@ -17,7 +17,7 @@ public abstract class Account {
         this.status = "Active";
     }
 
-    private String generateAccountNumber() {
+    private static String generateAccountNumber() {
         return "ACC" + String.format("%03d", accountCounter++);
     }
 
