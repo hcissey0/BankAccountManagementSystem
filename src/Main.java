@@ -8,14 +8,19 @@ import customers.RegularCustomer;
 import transactions.Transaction;
 import transactions.TransactionManager;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.Scanner;
 
 
+/**
+ * The type Main.
+ */
 class Main {
 
 
-    public static void main() throws IOException {
+    /**
+     * Main.
+     */
+    static void main() {
         System.out.println("+-------------------------+");
         System.out.println("| BANK ACCOUNT MANAGEMENT |");
         System.out.println("+-------------------------+");
@@ -23,7 +28,7 @@ class Main {
         // create an account manager and a transaction manager.
         AccountManager accountManager = new AccountManager();
         TransactionManager transactionManager = new TransactionManager();
-        
+
         int choice = 0;
         Scanner scanner = new Scanner(System.in);
 
@@ -57,6 +62,8 @@ class Main {
                 case 5:
                     viewAllTransactionHistory(transactionManager, scanner);
                     break;
+                case 6:
+                    break;
                 default:
                     System.out.println("\nInvalid Input. Try Again!\n");
             }
@@ -68,10 +75,22 @@ class Main {
         System.out.println("Goodbye!");
     }
 
+    /**
+     * View all transaction history.
+     *
+     * @param transactionManager the transaction manager
+     * @param scanner            the scanner
+     */
     public static void viewAllTransactionHistory(TransactionManager transactionManager, Scanner scanner) {
         transactionManager.viewAllTransactions(scanner);
     }
 
+    /**
+     * View transaction history.
+     *
+     * @param transactionManager the transaction manager
+     * @param scanner            the scanner
+     */
     public static void viewTransactionHistory(TransactionManager transactionManager, Scanner scanner) {
         System.out.println();
         System.out.println("+--------------------------+");
@@ -83,7 +102,15 @@ class Main {
         transactionManager.viewTransactionsByAccount(accountNumber, scanner);
     }
 
-    private static void processTransaction(AccountManager accountManager, TransactionManager transactionManager, Scanner scanner) {
+
+    /**
+     * Process transaction.
+     *
+     * @param accountManager     the account manager
+     * @param transactionManager the transaction manager
+     * @param scanner            the scanner
+     */
+    public static void processTransaction(AccountManager accountManager, TransactionManager transactionManager, Scanner scanner) {
         System.out.println();
         System.out.println("+---------------------+");
         System.out.println("| PROCESS TRANSACTION |");
@@ -102,39 +129,80 @@ class Main {
         System.out.println("\nSelect Transaction Type:");
         System.out.println("1. Deposit");
         System.out.println("2. Withdraw");
-        
+
         int transactionType = readInt(scanner, "Enter choice (1-2): ", 1, 2);
 
         double amount = readDouble(scanner, "Enter amount: ", 0);
-        double amountAfter = 0;
+
+        String typeStr = (transactionType == 1) ? "Deposit" : "Withdrawal";
+
+        double amountAfter = (transactionType == 1 ? account.getBalance() + amount : account.getBalance() - amount);
+        Transaction transaction = new Transaction(
+                account.getAccountNumber(),
+                (transactionType == 1) ? "DEPOSIT" : "WITHDRAWAL",
+                amount,
+                amountAfter);
+
+
+        System.out.println();
+        System.out.println("+--------------------------+");
+        System.out.println("| Transaction Confirmation |");
+        System.out.println("+--------------------------+");
+        System.out.println("Transaction ID: " + transaction.getTransactionId());
+        System.out.println("Account: " + account.getAccountNumber());
+        System.out.println("Type: " + typeStr.toUpperCase());
+        System.out.println("Amount: $" + amount);
+        System.out.println("Previous Balance: $" + account.getBalance());
+        System.out.println("New Balance: $" + amountAfter);
+        System.out.println("Date/Time: " + transaction.getTimestamp());
+
+        System.out.print("\nConfirm transaction? (y/n): ");
+        String confirm = scanner.nextLine().trim().toLowerCase();
+
+        if (!confirm.startsWith("y")) {
+            System.out.println("❌Transaction cancelled.");
+            transaction = null;
+            return;
+        }
+
+        boolean success = false;
 
         if (transactionType == 1) {
-            if (amount <= 0) {
-                System.out.println("❌Deposit amount must be positive!");
-                return;
+            success = account.processTransaction(amount, "Deposit");
+            if (success) {
+                System.out.println("✅Deposit Successful! New Balance: $" + account.getBalance());
+                amountAfter = account.getBalance();
+            } else {
+                System.out.println("❌Deposit failed! Amount must be positive.");
             }
-            amountAfter = account.deposit(amount);
-            System.out.println("✅Deposit Successful! New Balance: $" + account.getBalance());
         } else if (transactionType == 2) {
-            amountAfter = account.withdraw(amount);
-            if (amountAfter > 0) {
+            success = account.processTransaction(amount, "Withdrawal");
+            if (success) {
                 System.out.println("✅Withdrawal Successful! New Balance: $" + account.getBalance());
+                amountAfter = account.getBalance();
             } else {
                 System.out.println("❌Insufficient funds or minimum balance requirement not met!");
             }
         } else {
             System.out.println("❌Invalid transaction type selected!");
         }
-        Transaction transaction = new Transaction(
-                account.getAccountNumber(),
-                (transactionType == 1) ? "DEPOSIT" : "WITHDRAWAL",
-                amount,
-                amountAfter       );
-        transactionManager.addTransaction(transaction);
+
+        if (success) {
+            transactionManager.addTransaction(transaction);
+        }
+
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
 
     }
 
 
+    /**
+     * Create account.
+     *
+     * @param accountManager the account manager
+     * @param scanner        the scanner
+     */
     public static void createAccount(AccountManager accountManager, Scanner scanner) {
         System.out.println();
         System.out.println("+------------------+");
@@ -144,9 +212,35 @@ class Main {
         Customer customer = createCustomer(scanner);
         Account account = createAccountForCustomer(scanner, customer);
 
+        System.out.println();
+        System.out.println("+--------------+");
+        System.out.println("| Confirmation |");
+        System.out.println("+--------------+");
+        System.out.println("Customer Name: " + customer.getName());
+        System.out.println("Customer Type: " + (customer instanceof RegularCustomer ? "Regular" : "Premium"));
+        System.out.println("Account Type: " + account.getAccountType());
+        System.out.println("Initial Deposit: $" + account.getBalance());
+
+        System.out.print("\nConfirm account creation? (y/n): ");
+        String confirm = scanner.nextLine().trim().toLowerCase();
+
+        if (!confirm.startsWith("y")) {
+            System.out.println("❌Account creation cancelled.");
+            customer = null;
+            account = null;
+            return;
+        }
+
         accountManager.addAccount(account);
 
         System.out.println("✅Account Created Successfully!");
+
+        account.displayAccountDetails();
+        customer.displayCustomerDetails();
+
+        System.out.println("\nPress Enter to continue...");
+        scanner.nextLine();
+
     }
 
     private static Customer createCustomer(Scanner scanner) {
@@ -184,11 +278,17 @@ class Main {
         }
     }
 
+    /**
+     * View accounts.
+     *
+     * @param accountManager the account manager
+     * @param scanner        the scanner
+     */
     public static void viewAccounts(AccountManager accountManager, Scanner scanner) {
         accountManager.viewAllAccounts(scanner);
     }
 
-    // input validation metods
+    // input validation functions
     private static int readInt(Scanner scanner, String prompt, int min, int max) {
         int value;
         while (true) {

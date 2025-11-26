@@ -2,20 +2,36 @@ package transactions;
 
 import java.util.*;
 
+/**
+ * The type Transaction manager.
+ */
 public class TransactionManager {
     private final List<Transaction> transactions;
     private int transactionCount;
 
+    /**
+     * Instantiates a new Transaction manager.
+     */
     public TransactionManager() {
         this.transactions = new ArrayList<Transaction>(200);
         this.transactionCount = 0;
     }
 
+    /**
+     * Add transaction.
+     *
+     * @param transaction the transaction
+     */
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
         this.transactionCount++;
     }
 
+    /**
+     * Calculate total deposits double.
+     *
+     * @return the double
+     */
     public double calculateTotalDeposits() {
         double total = 0;
         for (Transaction tx : transactions) {
@@ -26,6 +42,11 @@ public class TransactionManager {
         return total;
     }
 
+    /**
+     * Calculate total withdrawals.
+     *
+     * @return the double
+     */
     public double calculateTotalWithdrawals() {
         double total = 0;
         for (Transaction tx : transactions) {
@@ -36,10 +57,20 @@ public class TransactionManager {
         return total;
     }
 
+    /**
+     * Gets transaction count.
+     *
+     * @return the transaction count
+     */
     public int getTransactionCount() {
         return transactionCount;
     }
 
+    /**
+     * View all transactions.
+     *
+     * @param scanner the scanner to use for "Press Enter to continue..." feature
+     */
     public void viewAllTransactions(Scanner scanner) {
         String[] headers = {
                 "TRANSACTION ID",
@@ -71,11 +102,10 @@ public class TransactionManager {
 
         table[0] = headers; // set headers in the first row
 
-        double totalDeposits = 0;
-        double totalWithdrawals = 0;
 
         int rowIndex = 1; // skip the header row
-        for (Transaction tx : transactions) { // set the with of the columes according to the longest data
+        for (int i = transactions.size() - 1; i >= 0; i--) { // set the with of the columes according to the longest data
+            Transaction tx = transactions.get(i);
             table[rowIndex][0] = tx.getTransactionId();
             if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {
                 headerWidth.replace(headers[0], tx.getTransactionId().length());
@@ -88,9 +118,9 @@ public class TransactionManager {
             if (headerWidth.get(headers[2]) < tx.getType().length()) {
                 headerWidth.replace(headers[2], tx.getType().length());
             }
-            table[rowIndex][3] = String.valueOf(tx.getAmount());
-            if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length()) {
-                headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length());
+            table[rowIndex][3] = (tx.getType().equalsIgnoreCase("DEPOSIT") ? "+$" : "-$") + tx.getAmount();
+            if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length() + 2) {
+                headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length() + 2);
             }
 
             table[rowIndex][4] = tx.getTimestamp();
@@ -98,10 +128,6 @@ public class TransactionManager {
                 headerWidth.replace(headers[4], tx.getTimestamp().length());
             }
 
-            if (tx.getType().equals("DEPOSIT"))
-                totalDeposits += tx.getAmount();
-            else
-                totalWithdrawals += tx.getAmount();
             rowIndex++;
         }
 
@@ -133,13 +159,19 @@ public class TransactionManager {
 
         System.out.println("\nNumber of transactions: " + (rowIndex - 1));
         System.out.println("Total transactions: " + transactionCount);
-        System.out.println("Total Deposits: $" + totalDeposits);
-        System.out.println("Total Withdrawals: $" + totalWithdrawals);
+        System.out.println("Total Deposits: $" + this.calculateTotalDeposits());
+        System.out.println("Total Withdrawals: $" + this.calculateTotalWithdrawals());
 
         System.out.println("\nPress Enter to continue...");
         scanner.nextLine();
     }
 
+    /**
+     * View transactions by account.
+     *
+     * @param accountNumber the account number
+     * @param scanner       the scanner for "Press Enter to continue..." feature
+     */
     public void viewTransactionsByAccount(String accountNumber, Scanner scanner) {
         String[] headers = {
                 "TRANSACTION ID",
@@ -166,7 +198,8 @@ public class TransactionManager {
 
 
         int rowIndex = 1; // skip the header row
-        for (Transaction tx : transactions) { // set the with of the columes according to the longest data
+        for (int i = transactions.size() - 1; i >= 0; i--) { // set the with of the columes according to the longest data
+            Transaction tx = transactions.get(i);
             if (tx.getAccountNumber().equals(accountNumber)) {
                 table[rowIndex][0] = tx.getTransactionId();
                 if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {
@@ -180,9 +213,9 @@ public class TransactionManager {
                 if (headerWidth.get(headers[2]) < tx.getType().length()) {
                     headerWidth.replace(headers[2], tx.getType().length());
                 }
-                table[rowIndex][3] = String.valueOf(tx.getAmount());
-                if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length()) {
-                    headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length());
+                table[rowIndex][3] = (tx.getType().equalsIgnoreCase("DEPOSIT") ? "+$" : "-$") + tx.getAmount();
+                if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length() + 2) {
+                    headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length() + 2);
                 }
 
                 table[rowIndex][4] = tx.getTimestamp();
@@ -207,8 +240,6 @@ public class TransactionManager {
             scanner.nextLine();
             return;
         }
-
-        System.out.println("\nNumber of transactions: " + (rowIndex - 1));
 
         // Print the table
         for (int i = 0; i < rowIndex; i++) {

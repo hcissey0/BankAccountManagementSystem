@@ -2,25 +2,47 @@ package accounts;
 
 import java.util.*;
 
+/**
+ * The type Account manager.
+ */
 public class AccountManager {
 
     private final List<Account> accounts;
     private int accountCount;
 
+    /**
+     * Instantiates a new Account manager.
+     */
     public AccountManager() {
         this.accounts = new ArrayList<Account>(50);
         this.accountCount = 0;
     }
 
+    /**
+     * Gets account count.
+     *
+     * @return the account count
+     */
     public int getAccountCount() {
         return accountCount;
     }
 
+    /**
+     * Add account.
+     *
+     * @param account the account
+     */
     public void addAccount(Account account) {
         this.accounts.add(account);
         this.accountCount++;
     }
 
+    /**
+     * Find account account.
+     *
+     * @param accountNumber the account number
+     * @return the account
+     */
     public Account findAccount(String accountNumber) {
         for (Account acc : accounts) {
             if (acc.getAccountNumber().equals(accountNumber)) {
@@ -30,6 +52,11 @@ public class AccountManager {
         return null;
     }
 
+    /**
+     * View all accounts.
+     *
+     * @param scanner the scanner
+     */
     public void viewAllAccounts(Scanner scanner) {
         String[] headers = {
                 "ACCOUNT NUMBER",
@@ -61,17 +88,32 @@ public class AccountManager {
 
         int rowIndex = 1;
         for (Account acc : accounts) {// set the with of the columes according to the longest data, and add data to the table
+
             table[rowIndex][0] = acc.getAccountNumber();
             if (headerWidth.get(headers[0]) < acc.getAccountNumber().length()) {
                 headerWidth.replace(headers[0], acc.getAccountNumber().length());
             }
-            table[rowIndex][1] = acc.getCustomer().getName();
-            if (headerWidth.get(headers[1]) < acc.getCustomer().getName().length()) {
-                headerWidth.replace(headers[1], acc.getCustomer().getName().length());
+
+            table[rowIndex][1] =
+                    (
+                            acc instanceof CheckingAccount ?
+                                    acc.getCustomer().getName().concat(" (Overdraft Limit: $" + ((CheckingAccount) acc).getOverdraftLimit() + ")") :
+                                    acc.getCustomer().getName().concat(" (Interest Rate: " + ((SavingsAccount) acc).getInterestRate() + "%)")
+                    );
+//            table[rowIndex][1] = acc.getCustomer().getName();
+            if (headerWidth.get(headers[1]) < table[rowIndex][1].length()) {
+                headerWidth.replace(headers[1], table[rowIndex][1].length());
             }
-            table[rowIndex][2] = acc.getAccountType();
-            if (headerWidth.get(headers[2]) < acc.getAccountType().length()) {
-                headerWidth.replace(headers[2], acc.getAccountType().length());
+
+            table[rowIndex][2] =
+                    (
+                            acc instanceof CheckingAccount ?
+                                    acc.getAccountType().concat(" (Monthly Fee: $" + ((CheckingAccount) acc).getMonthlyFee() + ")") :
+                                    acc.getAccountType().concat(" (Min Balance: $" + ((SavingsAccount) acc).getMinimumBalance() + ")")
+                    );
+//            table[rowIndex][2] = acc.getAccountType();
+            if (headerWidth.get(headers[2]) < table[rowIndex][2].length()) {
+                headerWidth.replace(headers[2], table[rowIndex][2].length());
             }
             table[rowIndex][3] = String.valueOf(acc.getBalance());
             if (headerWidth.get(headers[3]) < String.valueOf(acc.getBalance()).length()) {
@@ -108,21 +150,20 @@ public class AccountManager {
             }
         }
 
-        for (String header : headers) { // print border line before header
-            int headerWidthValue = headerWidth.get(header);
-            System.out.print("+");
-            System.out.print("-".repeat(headerWidthValue + 2));
-        }
-        System.out.println("+");
+        System.out.println();
+        System.out.println("Total Accounts: " + (rowIndex - 1));
+        System.out.println("Total Bank Balance: %" + getTotalBalance());
 
         System.out.println("\nPress Enter to continue...");
-
-        Scanner sc = new Scanner(System.in);
-        sc.nextLine();
-        sc.close();
+        scanner.nextLine();
 
     }
 
+    /**
+     * Gets total balance.
+     *
+     * @return the total balance
+     */
     public double getTotalBalance() {
         double totalBalance = 0;
         for (Account acc : accounts) {

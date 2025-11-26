@@ -1,8 +1,19 @@
 package customers;
 
+/**
+ * The type Premium customer.
+ */
 public class PremiumCustomer extends Customer {
     private final double minimumBalance;
 
+    /**
+     * Instantiates a new Premium customer.
+     *
+     * @param name    the name
+     * @param age     the age
+     * @param contact the contact
+     * @param address the address
+     */
     public PremiumCustomer(String name, int age, String contact, String address) {
         this.minimumBalance = 10000.0;
         this.setName(name);
@@ -11,15 +22,21 @@ public class PremiumCustomer extends Customer {
         this.setAddress(address);
     }
 
+    /**
+     * Has waived fees boolean.
+     *
+     * @return the boolean
+     */
     public boolean hasWaivedFees() {
         return true;
     }
 
     @java.lang.Override
     public void displayCustomerDetails() {
-        System.out.println("--------------------------");
-        System.out.println("Customer Details");
-        System.out.println("--------------------------");
+        System.out.println("+------------------+");
+        System.out.println("| Customer Details |");
+        System.out.println("+------------------+");
+        System.out.println("Customer Number: " + this.getCustomerId());
         System.out.println("Name: " + this.getName());
         System.out.println("Age: " + this.getAge());
         System.out.println("Contact: " + this.getContact());
@@ -27,7 +44,7 @@ public class PremiumCustomer extends Customer {
         System.out.println("Type: " + this.getCustomerType());
         System.out.println("Minimum Balance: " + this.minimumBalance);
         System.out.println("Monthly fee: Waived");
-        System.out.println("--------------------------");
+        System.out.println("+--------------------------+");
     }
 
     @java.lang.Override
