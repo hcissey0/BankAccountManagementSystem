@@ -1,19 +1,21 @@
 package transactions;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * The type Transaction manager.
  */
 public class TransactionManager {
-    private final List<Transaction> transactions;
+    private final Transaction[] transactions;
     private int transactionCount;
 
     /**
      * Instantiates a new Transaction manager.
      */
     public TransactionManager() {
-        this.transactions = new ArrayList<Transaction>(200);
+        this.transactions = new Transaction[200];
         this.transactionCount = 0;
     }
 
@@ -23,8 +25,7 @@ public class TransactionManager {
      * @param transaction the transaction
      */
     public void addTransaction(Transaction transaction) {
-        this.transactions.add(transaction);
-        this.transactionCount++;
+        this.transactions[this.transactionCount++] = transaction;
     }
 
     /**
@@ -34,11 +35,11 @@ public class TransactionManager {
      */
     public double calculateTotalDeposits() {
         double total = 0;
-        for (Transaction tx : transactions) {
-            if (tx.getType().equals("Deposit")) {
-                total += tx.getAmount();
-            }
-        }
+
+        for (int i = 0; i < this.transactionCount; i++)
+            if (this.transactions[i].getType().equals("Deposit"))
+                total += this.transactions[i].getAmount();
+
         return total;
     }
 
@@ -49,11 +50,11 @@ public class TransactionManager {
      */
     public double calculateTotalWithdrawals() {
         double total = 0;
-        for (Transaction tx : transactions) {
-            if (tx.getType().equals("Withdrawal")) {
-                total += tx.getAmount();
-            }
-        }
+
+        for (int i = 0; i < this.transactionCount; i++)
+            if (this.transactions[i].getType().equals("Withdrawal"))
+                total += this.transactions[i].getAmount();
+
         return total;
     }
 
@@ -63,7 +64,7 @@ public class TransactionManager {
      * @return the transaction count
      */
     public int getTransactionCount() {
-        return transactionCount;
+        return this.transactionCount;
     }
 
     /**
@@ -93,7 +94,7 @@ public class TransactionManager {
         Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
 
 
-        String[][] table = new String[transactions.size() + 1][headers.length]; // a 2D array to hold table data
+        String[][] table = new String[this.transactionCount + 1][headers.length]; // a 2D array to hold table data
 
 
         for (String string : headers) {
@@ -104,8 +105,8 @@ public class TransactionManager {
 
 
         int rowIndex = 1; // skip the header row
-        for (int i = transactions.size() - 1; i >= 0; i--) { // set the with of the columes according to the longest data
-            Transaction tx = transactions.get(i);
+        for (int i = this.transactionCount - 1; i >= 0; i--) { // set the with of the columes according to the longest data
+            Transaction tx = transactions[i];
             table[rowIndex][0] = tx.getTransactionId();
             if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {
                 headerWidth.replace(headers[0], tx.getTransactionId().length());
@@ -185,7 +186,7 @@ public class TransactionManager {
         Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
 
 
-        String[][] table = new String[transactions.size() + 1][headers.length]; // a 2D array to hold table data
+        String[][] table = new String[this.transactionCount + 1][headers.length]; // a 2D array to hold table data
 
 
         for (String string : headers) {
@@ -194,12 +195,13 @@ public class TransactionManager {
 
         table[0] = headers; // set headers in the first row
 
-        double totalDeposits = 0, totalWithdrawals = 0;
+        double totalDeposits = 0;
+        double totalWithdrawals = 0;
 
 
         int rowIndex = 1; // skip the header row
-        for (int i = transactions.size() - 1; i >= 0; i--) { // set the with of the columes according to the longest data
-            Transaction tx = transactions.get(i);
+        for (int i = this.transactionCount - 1; i >= 0; i--) { // set the with of the columes according to the longest data
+            Transaction tx = transactions[i];
             if (tx.getAccountNumber().equals(accountNumber)) {
                 table[rowIndex][0] = tx.getTransactionId();
                 if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {

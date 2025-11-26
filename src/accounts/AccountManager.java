@@ -1,20 +1,22 @@
 package accounts;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * The type Account manager.
  */
 public class AccountManager {
 
-    private final List<Account> accounts;
+    private final Account[] accounts;
     private int accountCount;
 
     /**
      * Instantiates a new Account manager.
      */
     public AccountManager() {
-        this.accounts = new ArrayList<Account>(50);
+        this.accounts = new Account[50];
         this.accountCount = 0;
     }
 
@@ -33,8 +35,8 @@ public class AccountManager {
      * @param account the account
      */
     public void addAccount(Account account) {
-        this.accounts.add(account);
-        this.accountCount++;
+        this.accounts[this.accountCount++] = account;
+        System.out.println("Accounts: ");
     }
 
     /**
@@ -44,9 +46,9 @@ public class AccountManager {
      * @return the account
      */
     public Account findAccount(String accountNumber) {
-        for (Account acc : accounts) {
-            if (acc.getAccountNumber().equals(accountNumber)) {
-                return acc;
+        for (int i = 0; i < this.accountCount; i++) {
+            if (this.accounts[i].getAccountNumber().equals(accountNumber)) {
+                return this.accounts[i];
             }
         }
         return null;
@@ -77,7 +79,7 @@ public class AccountManager {
 
         Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
 
-        String[][] table = new String[accounts.size() + 1][headers.length]; // a 2D array to hold table data
+        String[][] table = new String[accounts.length + 1][headers.length]; // a 2D array to hold table data
 
         for (String string : headers) {
             headerWidth.put(string, string.length());
@@ -87,8 +89,8 @@ public class AccountManager {
         table[0] = headers;
 
         int rowIndex = 1;
-        for (Account acc : accounts) {// set the with of the columes according to the longest data, and add data to the table
-
+        for (int i = 0; i < this.accountCount; i++) {// set the with of the columes according to the longest data, and add data to the table
+            Account acc = this.accounts[i];
             table[rowIndex][0] = acc.getAccountNumber();
             if (headerWidth.get(headers[0]) < acc.getAccountNumber().length()) {
                 headerWidth.replace(headers[0], acc.getAccountNumber().length());
@@ -166,9 +168,8 @@ public class AccountManager {
      */
     public double getTotalBalance() {
         double totalBalance = 0;
-        for (Account acc : accounts) {
-            totalBalance += acc.getBalance();
-        }
+        for (int i = 0; i < this.accountCount; i++)
+            totalBalance += this.accounts[i].getBalance();
 
         return totalBalance;
     }

@@ -228,8 +228,6 @@ class Main {
 
         if (!confirm.startsWith("y")) {
             System.out.println("❌Account creation cancelled.");
-            customer = null;
-            account = null;
             return;
         }
 
