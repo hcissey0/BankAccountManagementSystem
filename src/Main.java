@@ -19,8 +19,10 @@ class Main {
 
     /**
      * Main.
+     *
+     * @param args the args
      */
-    static void main() {
+    static void main(String[] args) {
         System.out.println("+-------------------------+");
         System.out.println("| BANK ACCOUNT MANAGEMENT |");
         System.out.println("+-------------------------+");
