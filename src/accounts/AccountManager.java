@@ -115,9 +115,9 @@ public class AccountManager {
             if (headerWidth.get(headers[2]) < table[rowIndex][2].length()) {
                 headerWidth.replace(headers[2], table[rowIndex][2].length());
             }
-            table[rowIndex][3] = String.valueOf(acc.getBalance());
-            if (headerWidth.get(headers[3]) < String.valueOf(acc.getBalance()).length()) {
-                headerWidth.replace(headers[3], String.valueOf(acc.getBalance()).length());
+            table[rowIndex][3] = "$" + acc.getBalance();
+            if (headerWidth.get(headers[3]) < table[rowIndex][3].length()) {
+                headerWidth.replace(headers[3], table[rowIndex][3].length());
             }
             table[rowIndex][4] = acc.getStatus();
             if (headerWidth.get(headers[4]) < acc.getStatus().length()) {
