@@ -265,11 +265,16 @@ class Main {
     private static Account createAccountForCustomer(Scanner scanner, Customer customer) {
         System.out.println("\nAccount type:");
         System.out.println("1. Savings Account (Interest: 3.5%, Min Balance: $500)");
-        System.out.println("2. Checking Account (Overdraft: $1,00, Monthly Fee: $10)");
+        System.out.println("2. Checking Account (Overdraft: $1,000, Monthly Fee: $10)");
 
         int accountType = readInt(scanner, "\nSelect type (1-2): ", 1, 2);
 
-        double initialDeposit = readDouble(scanner, "\nEnter initial deposit amount: ", 0);
+        double minDeposit = (accountType == 1) ? 500.0 : 0.0;
+        if (customer instanceof PremiumCustomer) {
+            minDeposit = Math.max(minDeposit, 10000.0);
+        }
+
+        double initialDeposit = readDouble(scanner, "\nEnter initial deposit amount: ", minDeposit);
 
         if (accountType == 1) {
             return new SavingsAccount(customer, initialDeposit);
