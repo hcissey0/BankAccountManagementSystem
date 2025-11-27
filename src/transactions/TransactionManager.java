@@ -1,7 +1,5 @@
 package transactions;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -91,42 +89,37 @@ public class TransactionManager {
             return;
         }
 
-        Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
-
-
-        String[][] table = new String[this.transactionCount + 1][headers.length]; // a 2D array to hold table data
-
-
-        for (String string : headers) {
-            headerWidth.put(string, string.length());
+        int[] headerWidth = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            headerWidth[i] = headers[i].length();
         }
 
+        String[][] table = new String[this.transactionCount + 1][headers.length]; // a 2D array to hold table data
         table[0] = headers; // set headers in the first row
-
 
         int rowIndex = 1; // skip the header row
         for (int i = this.transactionCount - 1; i >= 0; i--) { // set the with of the columes according to the longest data
             Transaction tx = transactions[i];
             table[rowIndex][0] = tx.getTransactionId();
-            if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {
-                headerWidth.replace(headers[0], tx.getTransactionId().length());
+            if (headerWidth[0] < table[rowIndex][0].length()) {
+                headerWidth[0] = table[rowIndex][0].length();
             }
             table[rowIndex][1] = tx.getAccountNumber();
-            if (headerWidth.get(headers[1]) < tx.getAccountNumber().length()) {
-                headerWidth.replace(headers[1], tx.getAccountNumber().length());
+            if (headerWidth[1] < table[rowIndex][1].length()) {
+                headerWidth[1] = table[rowIndex][1].length();
             }
             table[rowIndex][2] = tx.getType();
-            if (headerWidth.get(headers[2]) < tx.getType().length()) {
-                headerWidth.replace(headers[2], tx.getType().length());
+            if (headerWidth[2] < table[rowIndex][2].length()) {
+                headerWidth[2] = table[rowIndex][2].length();
             }
             table[rowIndex][3] = (tx.getType().equalsIgnoreCase("DEPOSIT") ? "+$" : "-$") + tx.getAmount();
-            if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length() + 2) {
-                headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length() + 2);
+            if (headerWidth[3] < table[rowIndex][3].length()) {
+                headerWidth[3] = table[rowIndex][3].length();
             }
 
             table[rowIndex][4] = tx.getTimestamp();
-            if (headerWidth.get(headers[4]) < tx.getTimestamp().length()) {
-                headerWidth.replace(headers[4], tx.getTimestamp().length());
+            if (headerWidth[4] < table[rowIndex][4].length()) {
+                headerWidth[4] = table[rowIndex][4].length();
             }
 
             rowIndex++;
@@ -136,23 +129,21 @@ public class TransactionManager {
         // Print the table
         for (int i = 0; i < rowIndex; i++) {
             if (i == 0) { // print border line before header
-                for (String header : headers) {
-                    int headerWidthValue = headerWidth.get(header);
+                for (int width : headerWidth) {
                     System.out.print("+");
-                    System.out.print("-".repeat(headerWidthValue + 2));
+                    System.out.print("-".repeat(width + 2));
                 }
                 System.out.println("+");
             }
             for (int j = 0; j < headers.length; j++) {
                 System.out.print("| ");
-                System.out.printf("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j]); // pad the string with spaces to the right
+                System.out.printf("%-" + (headerWidth[j] + 1) + "s", table[i][j]); // pad the string with spaces to the right
             }
             System.out.println("|");
             if (i == 0 || i == rowIndex - 1) { // print border line after header and after last row
-                for (String header : headers) {
-                    int headerWidthValue = headerWidth.get(header);
+                for (int width : headerWidth) {
                     System.out.print("+");
-                    System.out.print("-".repeat(headerWidthValue + 2));
+                    System.out.print("-".repeat(width + 2));
                 }
                 System.out.println("+");
             }
@@ -183,16 +174,12 @@ public class TransactionManager {
         };
 
 
-        Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
-
-
-        String[][] table = new String[this.transactionCount + 1][headers.length]; // a 2D array to hold table data
-
-
-        for (String string : headers) {
-            headerWidth.put(string, string.length());
+        int[] headerWidth = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            headerWidth[i] = headers[i].length();
         }
 
+        String[][] table = new String[this.transactionCount + 1][headers.length]; // a 2D array to hold table data
         table[0] = headers; // set headers in the first row
 
         double totalDeposits = 0;
@@ -204,25 +191,25 @@ public class TransactionManager {
             Transaction tx = transactions[i];
             if (tx.getAccountNumber().equals(accountNumber)) {
                 table[rowIndex][0] = tx.getTransactionId();
-                if (headerWidth.get(headers[0]) < tx.getTransactionId().length()) {
-                    headerWidth.replace(headers[0], tx.getTransactionId().length());
+                if (headerWidth[0] < table[rowIndex][0].length()) {
+                    headerWidth[0] = table[rowIndex][0].length();
                 }
                 table[rowIndex][1] = tx.getAccountNumber();
-                if (headerWidth.get(headers[1]) < tx.getAccountNumber().length()) {
-                    headerWidth.replace(headers[1], tx.getAccountNumber().length());
+                if (headerWidth[1] < table[rowIndex][1].length()) {
+                    headerWidth[1] = table[rowIndex][1].length();
                 }
                 table[rowIndex][2] = tx.getType();
-                if (headerWidth.get(headers[2]) < tx.getType().length()) {
-                    headerWidth.replace(headers[2], tx.getType().length());
+                if (headerWidth[2] < table[rowIndex][2].length()) {
+                    headerWidth[2] = table[rowIndex][2].length();
                 }
                 table[rowIndex][3] = (tx.getType().equalsIgnoreCase("DEPOSIT") ? "+$" : "-$") + tx.getAmount();
-                if (headerWidth.get(headers[3]) < String.valueOf(tx.getAmount()).length() + 2) {
-                    headerWidth.replace(headers[3], String.valueOf(tx.getAmount()).length() + 2);
+                if (headerWidth[3] < table[rowIndex][3].length()) {
+                    headerWidth[3] = table[rowIndex][3].length();
                 }
 
                 table[rowIndex][4] = tx.getTimestamp();
-                if (headerWidth.get(headers[4]) < tx.getTimestamp().length()) {
-                    headerWidth.replace(headers[4], tx.getTimestamp().length());
+                if (headerWidth[4] < table[rowIndex][4].length()) {
+                    headerWidth[4] = table[rowIndex][4].length();
                 }
 
                 if (tx.getType().equals("DEPOSIT"))
@@ -246,23 +233,21 @@ public class TransactionManager {
         // Print the table
         for (int i = 0; i < rowIndex; i++) {
             if (i == 0) { // print border line before header
-                for (String header : headers) {
-                    int headerWidthValue = headerWidth.get(header);
+                for (int width : headerWidth) {
                     System.out.print("+");
-                    System.out.print("-".repeat(headerWidthValue + 2));
+                    System.out.print("-".repeat(width + 2));
                 }
                 System.out.println("+");
             }
             for (int j = 0; j < headers.length; j++) {
                 System.out.print("| ");
-                System.out.printf("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j]); // pad the string with spaces to the right
+                System.out.printf("%-" + (headerWidth[j] + 1) + "s", table[i][j]); // pad the string with spaces to the right
             }
             System.out.println("|");
             if (i == 0 || i == rowIndex - 1) { // print border line after header and after last row
-                for (String header : headers) {
-                    int headerWidthValue = headerWidth.get(header);
+                for (int width : headerWidth) {
                     System.out.print("+");
-                    System.out.print("-".repeat(headerWidthValue + 2));
+                    System.out.print("-".repeat(width + 2));
                 }
                 System.out.println("+");
             }

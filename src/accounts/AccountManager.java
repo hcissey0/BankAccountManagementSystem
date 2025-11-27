@@ -1,7 +1,5 @@
 package accounts;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -77,23 +75,20 @@ public class AccountManager {
             return;
         }
 
-        Map<String, Integer> headerWidth = new HashMap<>(); // a map of column widths with header names as keys
-
-        String[][] table = new String[accounts.length + 1][headers.length]; // a 2D array to hold table data
-
-        for (String string : headers) {
-            headerWidth.put(string, string.length());
+        int[] headerWidth = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            headerWidth[i] = headers[i].length();
         }
 
-
+        String[][] table = new String[accounts.length + 1][headers.length]; // a 2D array to hold table data
         table[0] = headers;
 
         int rowIndex = 1;
         for (int i = 0; i < this.accountCount; i++) {// set the with of the columes according to the longest data, and add data to the table
             Account acc = this.accounts[i];
             table[rowIndex][0] = acc.getAccountNumber();
-            if (headerWidth.get(headers[0]) < acc.getAccountNumber().length()) {
-                headerWidth.replace(headers[0], acc.getAccountNumber().length());
+            if (headerWidth[0] < acc.getAccountNumber().length()) {
+                headerWidth[0] = acc.getAccountNumber().length();
             }
 
             table[rowIndex][1] =
@@ -102,9 +97,8 @@ public class AccountManager {
                                     acc.getCustomer().getName().concat(" (Overdraft Limit: $" + ((CheckingAccount) acc).getOverdraftLimit() + ")") :
                                     acc.getCustomer().getName().concat(" (Interest Rate: " + ((SavingsAccount) acc).getInterestRate() + "%)")
                     );
-//            table[rowIndex][1] = acc.getCustomer().getName();
-            if (headerWidth.get(headers[1]) < table[rowIndex][1].length()) {
-                headerWidth.replace(headers[1], table[rowIndex][1].length());
+            if (headerWidth[1] < table[rowIndex][1].length()) {
+                headerWidth[1] = table[rowIndex][1].length();
             }
 
             table[rowIndex][2] =
@@ -113,40 +107,37 @@ public class AccountManager {
                                     acc.getAccountType().concat(" (Monthly Fee: $" + ((CheckingAccount) acc).getMonthlyFee() + ")") :
                                     acc.getAccountType().concat(" (Min Balance: $" + ((SavingsAccount) acc).getMinimumBalance() + ")")
                     );
-//            table[rowIndex][2] = acc.getAccountType();
-            if (headerWidth.get(headers[2]) < table[rowIndex][2].length()) {
-                headerWidth.replace(headers[2], table[rowIndex][2].length());
+            if (headerWidth[2] < table[rowIndex][2].length()) {
+                headerWidth[2] = table[rowIndex][2].length();
             }
             table[rowIndex][3] = "$" + acc.getBalance();
-            if (headerWidth.get(headers[3]) < table[rowIndex][3].length()) {
-                headerWidth.replace(headers[3], table[rowIndex][3].length());
+            if (headerWidth[3] < table[rowIndex][3].length()) {
+                headerWidth[3] = table[rowIndex][3].length();
             }
             table[rowIndex][4] = acc.getStatus();
-            if (headerWidth.get(headers[4]) < acc.getStatus().length()) {
-                headerWidth.replace(headers[4], acc.getStatus().length());
+            if (headerWidth[4] < acc.getStatus().length()) {
+                headerWidth[4] = acc.getStatus().length();
             }
             rowIndex++;
         }
 
         for (int i = 0; i < rowIndex; i++) {
             if (i == 0) { // print border line before header
-                for (String header : headers) {
-                    int headerWidthValue = headerWidth.get(header);
+                for (int width : headerWidth) {
                     System.out.print("+");
-                    System.out.print("-".repeat(headerWidthValue + 2));
+                    System.out.print("-".repeat(width + 2));
                 }
                 System.out.println("+");
             }
             for (int j = 0; j < headers.length; j++) {
                 System.out.print("| ");
-                System.out.printf("%-" + (headerWidth.get(headers[j]) + 1) + "s", table[i][j]); // pad the string with spaces to the right
+                System.out.printf("%-" + (headerWidth[j] + 1) + "s", table[i][j]); // pad the string with spaces to the right
             }
             System.out.println("|");
             if (i == 0 || i == rowIndex - 1) { // print border line after header and after last row
-                for (String header : headers) {
-                    int headerWidthValue = headerWidth.get(header);
+                for (int width : headerWidth) {
                     System.out.print("+");
-                    System.out.print("-".repeat(headerWidthValue + 2));
+                    System.out.print("-".repeat(width + 2));
                 }
                 System.out.println("+");
             }

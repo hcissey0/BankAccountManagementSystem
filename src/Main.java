@@ -26,7 +26,7 @@ class Main {
         System.out.println("+-------------------------+");
         System.out.println("| BANK ACCOUNT MANAGEMENT |");
         System.out.println("+-------------------------+");
-
+        
         // create an account manager and a transaction manager.
         AccountManager accountManager = new AccountManager();
         TransactionManager transactionManager = new TransactionManager();
